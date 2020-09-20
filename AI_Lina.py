@@ -9,6 +9,10 @@ import webbrowser as wb
 import psutil
 import pyjokes
 # import pyautogui
+import random
+import  json
+import requests
+from urllib.request import  urlopen
 
 
 
@@ -119,10 +123,34 @@ if __name__=="__main__":
             webbrowser.open("google.com")
         
         elif 'play music' in query:
+            # music_dir="F:\\VIDEO M\\nandu bhaiya bhajan"
+            # songs=os.listdir(music_dir)
+            # speak("what  should I play..?")
+            # speak("select a number")
+            # ans=takeCommand().lower()
+            # if 'number' in ans:
+            # no=(ans.replace('number',''))
+            # print(songs)
+            # # os.startfile(os.path.join(music_dir,songs[0]))
+            # os.startfile(os.path.join(music_dir,songs[0])) #list of song choose by system            
+
             music_dir="F:\\VIDEO M\\nandu bhaiya bhajan"
             songs=os.listdir(music_dir)
-            print(songs)
-            os.startfile(os.path.join(music_dir,songs[0]))            
+            speak("what  should I play..?")
+            speak("select a number")
+            ans=takeCommand().lower()
+            while('number' not in ans and ans not in 'random'  and ans not in  'you select'):
+                speak("I am unable to understand sir,Please say again...")
+                ans= takeCommand().lower()
+            
+            if 'number' in ans:
+                no=(ans.replace('number',''))
+            if 'random' or 'you select' in ans:
+                speak("your song ")
+                no=random.randint(1,10)
+                print(songs)
+            # os.startfile(os.path.join(music_dir,songs[0]))
+                os.startfile(os.path.join(music_dir,songs[no])) #list of song choose by system            
 
         elif 'time' in query:
             # strTime = datetime.datetime.now().strftime("%H:%M:%S")  
@@ -183,7 +211,58 @@ if __name__=="__main__":
                       
         elif "joke" in query:
             jokes()
-                                    
+        
+        elif "code" in query:
+            speak("opening visual Studio code sir...Please wait for a minute...")
+            code=r'location of file'
+            os.startfile(code)     
+                         
+        elif "write a note" in query:
+            speak("what should I write Anil?")
+            notes=takeCommand()
+            file=open("E:\\pythonProg\\Jarvis_AI\\notes.txt",'w')
+            speak("sir, should I include Date and time?")
+            ans=takeCommand()
+            if 'yes' in ans or 'sure' in ans:
+                strTime=datetime.datetime.now().strftime("%H:%M:%S")
+                file.write(strTime)
+                file.write(":-")
+                file.write(notes)
+                speak("Done Anil with time quote...")
+            else:
+                file.write(notes)
+                speak("Done Anil")    
+            
+        elif 'show note' or 'so not' in query:
+            speak("showing your notes")
+            file=open("E:\\pythonProg\\Jarvis_AI\\notes.txt",'r')
+            print(file.read())
+            # speak(file.read())
+        
+        elif 'news' in query:
+            speak("No news ")
+            try:
+                jsonObj=urlopen("https://newsapi.org/v1/articles?source=bbc-news&sortBy=top&apiKey=4dbc17e007ab436fb66416009dfb59a8")
+                data=json.loads(jsonObj)
+                i=1
+                speak("top news headline for you sir")
+                print(data)
+                for item in data['articles']:
+                    print(str(i)+ '.'+item['title']+'\n')
+                    print(item['description']+'\n')
+                    speak(item['title'])
+                    i=i+1
+            
+            except Exception as e:
+                print(str(e))        
+                
+        
+        elif "find location" in query:
+            query=query.replace("find location","")
+            location=query
+            speak("you asked to locate the location is."+location)
+            wb.open_new_tab("https://www.google.com/maps/place/"+location)                
+                                        
         elif 'offline' in query:
             speak("Good Bye Anil,Have a nice day.")
             quit()    
